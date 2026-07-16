@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnvíosApp México | Entregas rápidas y rastreo en tiempo real</title>
+    <meta name="description" content="La plataforma de envíos y entregas a domicilio en México. Rastrea tu paquete en tiempo real, solicita un repartidor o únete como conductor.">
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/landing.css">
+</head>
+<body class="landing-body">
+
+    <!-- ===== Header ===== -->
+    <header class="landing-header">
+        <nav class="landing-nav">
+            <a href="#inicio" class="landing-logo">📦 EnvíosApp</a>
+
+            <ul class="landing-menu" id="landingMenu">
+                <li><a href="#empresa">Para empresas</a></li>
+                <li><a href="#personal">Para mí</a></li>
+                <li><a href="#conductor">Quiero ser repartidor</a></li>
+                <li><a href="#vehiculos">Tarifas</a></li>
+                <li><a href="#rastreo">Rastrear envío</a></li>
+            </ul>
+
+            <div class="landing-nav-actions">
+                <a href="app.html" class="btn-outline">Iniciar sesión</a>
+                <a href="app.html#registro" class="btn-cta">Regístrate ahora</a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <span class="hero-eyebrow">🇲🇽 Operando en Teotihuacán, Texcoco y Estado de México</span>
+            <h1>Envíos más rápidos, el mismo día</h1>
+            <p>La plataforma de entregas bajo demanda que conecta clientes con repartidores en minutos. Mensajería, paquetería y carga, las 24 horas.</p>
+
+            <div class="hero-actions">
+                <a href="app.html#registro" class="btn-cta-white">Solicitar un envío</a>
+                <a href="#conductor" class="btn-cta-outline-white">Quiero ser repartidor</a>
+            </div>
+
+            <!-- Widget de rastreo en vivo -->
+            <div class="tracking-widget" id="rastreo">
+                <h3>📍 Rastrea tu envío al instante</h3>
+                <form class="tracking-form" id="trackingForm">
+                    <input type="text" id="trackingInput" placeholder="Ingresa tu número de guía (ej. ENV-20260629...)" required>
+                    <button type="submit">Rastrear</button>
+                </form>
+                <div class="tracking-result" id="trackingResult"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Service Cards: Empresa / Personal / Conductor ===== -->
+    <section class="landing-section" id="servicios">
+        <div class="section-header">
+            <span class="eyebrow">Nuestros servicios</span>
+            <h2>¿Qué necesitas hoy?</h2>
+            <p>Soluciones de última milla para empresas, personas y repartidores en todo el Estado de México.</p>
+        </div>
+
+        <div class="service-cards">
+            <a href="#empresa" class="service-card" id="empresa">
+                <span class="icon">🏢</span>
+                <h3>Para mi empresa</h3>
+                <p>Soluciones logísticas de última milla para negocios de todos los tamaños. Integra envíos a tu e-commerce o solicita en volumen.</p>
+                <span class="link-arrow">Conocer más →</span>
+            </a>
+
+            <a href="app.html#registro" class="service-card" id="personal">
+                <span class="icon">👤</span>
+                <h3>Para mí</h3>
+                <p>Conecta con un repartidor cuando lo necesites. Envía documentos, paquetes o productos el mismo día.</p>
+                <span class="link-arrow">Saber más →</span>
+            </a>
+
+            <a href="app.html#registro?role=repartidor" class="service-card" id="conductor">
+                <span class="icon">🛵</span>
+                <h3>Quiero ser repartidor</h3>
+                <p>Únete a nuestra red de repartidores y genera ingresos en tu propio horario, con tu propio vehículo.</p>
+                <span class="link-arrow">Maneja con nosotros →</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== USP / Por qué elegirnos ===== -->
+    <section class="landing-section usp-section">
+        <div class="section-header">
+            <span class="eyebrow">Tu aliado logístico</span>
+            <h2>Rápido. Fácil. Económico.</h2>
+        </div>
+
+        <div class="usp-grid">
+            <div class="usp-item">
+                <div class="usp-icon">⚡</div>
+                <h4>Rápido</h4>
+                <p>Envía tus paquetes el mismo día, con entregas inmediatas o programadas.</p>
+            </div>
+            <div class="usp-item">
+                <div class="usp-icon">💰</div>
+                <h4>Precios accesibles</h4>
+                <p>Tarifas transparentes y económicas, sin sorpresas al final.</p>
+            </div>
+            <div class="usp-item">
+                <div class="usp-icon">🕐</div>
+                <h4>Servicio 24/7</h4>
+                <p>Entregamos todos los días del año, a cualquier hora que lo necesites.</p>
+            </div>
+            <div class="usp-item">
+                <div class="usp-icon">📡</div>
+                <h4>Rastreo en tiempo real</h4>
+                <p>Monitorea tu entrega de principio a fin con GPS en vivo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Trust numbers ===== -->
+    <section class="landing-section" style="padding-top: 0;">
+        <div class="trust-bar">
+            <div class="trust-item">
+                <div class="trust-number">150+</div>
+                <div class="trust-label">Puntos de distribución</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-number">24/7</div>
+                <div class="trust-label">Servicio disponible</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-number">100%</div>
+                <div class="trust-label">Rastreo GPS en vivo</div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-number">7</div>
+                <div class="trust-label">Tipos de vehículo</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Vehículos / Tarifas ===== -->
+    <section class="landing-section" id="vehiculos">
+        <div class="section-header">
+            <span class="eyebrow">Tarifas</span>
+            <h2>El vehículo perfecto al mejor precio</h2>
+            <p>Elige el tipo de vehículo según el tamaño y peso de tu envío.</p>
+        </div>
+
+        <div class="vehicle-tabs" id="vehicleTabs"></div>
+        <div class="vehicle-detail" id="vehicleDetail"></div>
+    </section>
+
+    <!-- ===== Final CTA ===== -->
+    <div class="final-cta">
+        <h2>¿Listo para optimizar tus entregas?</h2>
+        <p>Regístrate gratis y solicita tu primer envío en minutos.</p>
+        <a href="app.html#registro" class="btn-cta-white">Crear cuenta gratis</a>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="landing-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#inicio" class="landing-logo">📦 EnvíosApp</a>
+                <p>Plataforma de entregas bajo demanda en Teotihuacán, Texcoco y el Estado de México. Conectamos clientes con repartidores de forma rápida y segura.</p>
+            </div>
+
+            <div class="footer-col">
+                <h5>Servicio</h5>
+                <ul>
+                    <li><a href="#empresa">Empresas</a></li>
+                    <li><a href="#personal">Personal</a></li>
+                    <li><a href="#conductor">Repartidores</a></li>
+                    <li><a href="#vehiculos">Tarifas</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h5>Compañía</h5>
+                <ul>
+                    <li><a href="#inicio">Acerca de</a></li>
+                    <li><a href="#rastreo">Rastrear envío</a></li>
+                    <li><a href="app.html">Iniciar sesión</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h5>Contacto</h5>
+                <ul>
+                    <li>📍 Teotihuacán, Edo. de México</li>
+                    <li>📧 contacto@enviosapp.mx</li>
+                    <li>📞 55-0000-0000</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2026 EnvíosApp. Todos los derechos reservados.</span>
+            <div class="footer-social">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="WhatsApp">💬</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="static/js/landing.js"></script>
+</body>
+</html>

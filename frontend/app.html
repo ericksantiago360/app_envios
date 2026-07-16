@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta | EnvíosApp</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/cotizador.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration:none;color:inherit;"><h1>📦 EnvíosApp</h1></a>
+                </div>
+                <nav id="mainNav" class="nav-hidden">
+                    <ul>
+                        <li><a href="#" data-page="dashboard">Dashboard</a></li>
+                        <li><a href="#" data-page="mapa">🗺️ Mapa</a></li>
+                        <li><a href="#" data-page="cotizador">🧮 Cotizador</a></li>
+                        <li><a href="#" data-page="envios">Envíos</a></li>
+                        <li><a href="#" data-page="clientes">Clientes</a></li>
+                        <li class="admin-only"><a href="#" data-page="repartidores">Repartidores</a></li>
+                        <li class="admin-only"><a href="#" data-page="rutas">Rutas</a></li>
+                    </ul>
+                </nav>
+                <div class="user-menu" id="userMenu" style="display:none;">
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="btn-secondary">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent">
+
+        <!-- Login -->
+        <div id="loginPage" class="page active">
+            <div class="auth-container">
+                <div class="auth-box">
+                    <h2>Iniciar Sesión</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Usuario</label>
+                            <input type="text" id="loginUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Ingresar</button>
+                    </form>
+                    <p class="auth-switch">¿No tienes cuenta? <a href="#" id="showRegister">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registro -->
+        <div id="registerPage" class="page">
+            <div class="auth-container">
+                <div class="auth-box">
+                    <h2>Crear Cuenta</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label>Usuario</label>
+                            <input type="text" id="regUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="regEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="regFullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Usuario</label>
+                            <select id="regRole" required>
+                                <option value="cliente">Cliente</option>
+                                <option value="repartidor">Repartidor</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" id="regPassword" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Registrarse</button>
+                    </form>
+                    <p class="auth-switch">¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión aquí</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapa -->
+        <div id="mapaPage" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Mapa de Envíos y Repartidores</h2>
+                    <div class="map-controls">
+                        <select id="mapFilterEstado" class="filter-select">
+                            <option value="">Todos los envíos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="en_transito">En Tránsito</option>
+                            <option value="entregado">Entregados</option>
+                        </select>
+                        <button id="btnCentrarMapa" class="btn-secondary">📍 Centrar</button>
+                        <button id="btnActualizarMapa" class="btn-primary">🔄 Actualizar</button>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div id="map" style="width:100%;height:600px;border-radius:12px;"></div>
+                </div>
+                <div class="map-legend">
+                    <h4>Leyenda</h4>
+                    <div class="legend-items">
+                        <div class="legend-item"><span class="legend-marker" style="background:#10b981;">🚚</span><span>Repartidor Disponible</span></div>
+                        <div class="legend-item"><span class="legend-marker" style="background:#ef4444;">🚚</span><span>No Disponible</span></div>
+                        <div class="legend-item"><span class="legend-marker" style="background:#f59e0b;">📦</span><span>Origen</span></div>
+                        <div class="legend-item"><span class="legend-marker" style="background:#2563eb;">🎯</span><span>Destino</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Cotizador -->
+        <div id="cotizadorPage" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>🧮 Cotizador de Envíos</h2>
+                </div>
+
+                <form id="cotizadorForm">
+                    <!-- Campo oculto para vehículo seleccionado -->
+                    <input type="hidden" id="cotVehiculo" value="">
+
+                    <!-- Selección de vehículo -->
+                    <div class="form-group">
+                        <label>Tipo de vehículo</label>
+                        <div class="veh-selector">
+                            <div class="veh-card" data-vehiculo="moto">
+                                <span class="veh-icon">🛵</span>
+                                <span class="veh-name">Moto</span>
+                                <span class="veh-peso">máx 20 kg</span>
+                            </div>
+                            <div class="veh-card" data-vehiculo="auto">
+                                <span class="veh-icon">🚗</span>
+                                <span class="veh-name">Auto</span>
+                                <span class="veh-peso">máx 100 kg</span>
+                            </div>
+                            <div class="veh-card" data-vehiculo="suv">
+                                <span class="veh-icon">🚙</span>
+                                <span class="veh-name">SUV</span>
+                                <span class="veh-peso">máx 300 kg</span>
+                            </div>
+                            <div class="veh-card" data-vehiculo="pickup">
+                                <span class="veh-icon">🛻</span>
+                                <span class="veh-name">Pickup</span>
+                                <span class="veh-peso">máx 700 kg</span>
+                            </div>
+                            <div class="veh-card" data-vehiculo="camioneta">
+                                <span class="veh-icon">🚚</span>
+                                <span class="veh-name">Camioneta</span>
+                                <span class="veh-peso">máx 1,500 kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zonas y servicio -->
+                    <div class="cot-form-grid">
+                        <div class="form-group">
+                            <label>Zona de origen</label>
+                            <select id="cotZonaOrigen" required>
+                                <option value="A">Zona A — Teotihuacán + San Martín</option>
+                                <option value="B">Zona B — Texcoco + Tecámac</option>
+                                <option value="C">Zona C — Otumba</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Zona de destino</label>
+                            <select id="cotZonaDestino" required>
+                                <option value="A">Zona A — Teotihuacán + San Martín</option>
+                                <option value="B">Zona B — Texcoco + Tecámac</option>
+                                <option value="C">Zona C — Otumba</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de servicio</label>
+                            <select id="cotServicio">
+                                <option value="estandar">Estándar — mismo día</option>
+                                <option value="express">Express — menos de 45 min (+$30)</option>
+                                <option value="programado">Programado — hora exacta (+$20)</option>
+                                <option value="fragil">Frágil — manejo especial (+$25)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Plan del repartidor</label>
+                            <select id="cotPlan">
+                                <option value="libre">Plan Libre — 22% comisión</option>
+                                <option value="estandar">Plan Estándar — 12% comisión</option>
+                                <option value="pro">Plan Pro — 6% comisión</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sliders -->
+                    <div class="cot-slider-group">
+                        <div class="cot-slider-header">
+                            <label>Distancia total</label>
+                            <span class="cot-slider-val" id="cotKmVal">8 km</span>
+                        </div>
+                        <input type="range" id="cotKm" class="cot-range" min="1" max="50" value="8" step="0.5">
+                    </div>
+
+                    <div class="cot-slider-group">
+                        <div class="cot-slider-header">
+                            <label>Tiempo de espera estimado</label>
+                            <span class="cot-slider-val" id="cotEsperaVal">0 min</span>
+                        </div>
+                        <input type="range" id="cotEspera" class="cot-range" min="0" max="60" value="0" step="10">
+                    </div>
+
+                    <div class="cot-btn-group">
+                        <button type="submit" id="btnCotizar" class="btn-primary">🧮 Calcular cotización</button>
+                        <button type="button" id="btnCompararPlanes" class="btn-secondary" onclick="cotizadorManager.compararPlanes();">📊 Comparar planes</button>
+                    </div>
+                </form>
+
+                <!-- Resultado -->
+                <div id="cotizadorResultado"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboardPage" class="page">
+            <div class="container">
+                <h2>Dashboard</h2>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info"><h3 id="totalEnvios">0</h3><p>Total Envíos</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚚</div>
+                        <div class="stat-info"><h3 id="enviosTransito">0</h3><p>En Tránsito</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info"><h3 id="enviosEntregados">0</h3><p>Entregados</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info"><h3 id="enviosPendientes">0</h3><p>Pendientes</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info"><h3 id="totalClientes">0</h3><p>Total Clientes</p></div>
+                    </div>
+                </div>
+                <div class="recent-section">
+                    <h3>Envíos Recientes</h3>
+                    <div id="recentEnvios" class="table-container"></div>
+                </div>
+                <div class="recent-section" style="margin-top:2rem;">
+                    <h3>Clientes Recientes</h3>
+                    <div id="recentClientes" class="table-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Envíos -->
+        <div id="enviosPage" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Gestión de Envíos</h2>
+                    <button id="btnNuevoEnvio" class="btn-primary">+ Nuevo Envío</button>
+                </div>
+                <div class="filters">
+                    <select id="filterEstado" class="filter-select">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en_transito">En Tránsito</option>
+                        <option value="entregado">Entregado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div id="enviosList" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Clientes -->
+        <div id="clientesPage" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Gestión de Clientes</h2>
+                    <button id="btnNuevoCliente" class="btn-primary">+ Nuevo Cliente</button>
+                </div>
+                <div id="clientesList" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Repartidores (admin) -->
+        <div id="repartidoresPage" class="page admin-only">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Gestión de Repartidores</h2>
+                    <button id="btnNuevoRepartidor" class="btn-primary">+ Nuevo Repartidor</button>
+                </div>
+                <div id="repartidoresList" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Rutas (admin) -->
+        <div id="rutasPage" class="page admin-only">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Gestión de Rutas</h2>
+                    <button id="btnNuevaRuta" class="btn-primary">+ Nueva Ruta</button>
+                </div>
+                <div id="rutasList" class="table-container"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="modalContainer"></div>
+    <div id="toastContainer"></div>
+
+    <!-- Google Maps: agrega tu API key aquí cuando la tengas
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initGoogleMaps"></script>
+    -->
+
+    <script src="static/js/api.js"></script>
+    <script src="static/js/auth.js"></script>
+    <script src="static/js/ui.js"></script>
+    <script src="static/js/mapa.js"></script>
+    <script src="static/js/envios.js"></script>
+    <script src="static/js/clientes.js"></script>
+    <script src="static/js/repartidores.js"></script>
+    <script src="static/js/rutas.js"></script>
+    <script src="static/js/cotizador.js"></script>
+    <script src="static/js/app.js"></script>
+</body>
+</html>
