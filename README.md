@@ -92,7 +92,7 @@ envios-app/
 
 ### 🏠 Landing Page Pública
 
-`index.html` es la página de inicio pública del sitio, inspirada en el modelo de **Lalamove México**. Incluye:
+`index.html` es la página de inicio pública del sitio, inspirada en el modelo de **envios**. Incluye:
 
 - **Hero** con CTA principal y widget de **rastreo de envíos en vivo** (conectado a `/api/envios/tracking/{numero_guia}`, sin necesidad de iniciar sesión)
 - Tarjetas de servicio: **Para empresa / Para mí / Quiero ser repartidor**
