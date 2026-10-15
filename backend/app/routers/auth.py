@@ -14,10 +14,16 @@ from app.core.config import settings
 
 router = APIRouter(prefix="/api/auth", tags=["Autenticación"])
 
+ROLES_REGISTRO_PUBLICO = {"cliente", "repartidor"}
+
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     """Registrar nuevo usuario"""
+    # El registro público no puede crear administradores
+    if user.role not in ROLES_REGISTRO_PUBLICO:
+        raise HTTPException(status_code=403, detail="Rol no permitido en el registro")
+
     # Verificar si el usuario ya existe
     db_user = db.query(User).filter(User.username == user.username).first()
     if db_user:

@@ -1,5 +1,16 @@
 // UI Utility Functions
 
+// Escapar texto antes de insertarlo con innerHTML (previene XSS)
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Show page
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => {
@@ -90,7 +101,7 @@ function getEstadoBadge(estado) {
         'entregado': '<span class="badge badge-success">Entregado</span>',
         'cancelado': '<span class="badge badge-danger">Cancelado</span>'
     };
-    return badges[estado] || '<span class="badge">' + estado + '</span>';
+    return badges[estado] || '<span class="badge">' + escapeHtml(estado) + '</span>';
 }
 
 // Create table
@@ -199,8 +210,8 @@ async function loadDashboard() {
             container.innerHTML = '<p class="text-center" style="padding:1.5rem;">No hay env\u00edos a\u00fan. <a href="#" onclick="showPage(&quot;enviosPage&quot;);enviosManager.load();">Crear primer env\u00edo</a></p>';
         } else {
             const rows = recent.map(envio => [
-                envio.numero_guia,
-                envio.ciudad_origen + ' → ' + envio.ciudad_destino,
+                escapeHtml(envio.numero_guia),
+                escapeHtml(envio.ciudad_origen + ' → ' + envio.ciudad_destino),
                 getEstadoBadge(envio.estado),
                 formatDate(envio.fecha_creacion),
                 formatCurrency(envio.costo)
@@ -220,9 +231,9 @@ async function loadDashboard() {
             } else {
                 const rowsCli = recentClientes.map(c => [
                     c.id,
-                    `${c.nombre} ${c.apellido}`,
-                    c.telefono || '-',
-                    c.ciudad || '-'
+                    escapeHtml(`${c.nombre} ${c.apellido}`),
+                    escapeHtml(c.telefono || '-'),
+                    escapeHtml(c.ciudad || '-')
                 ]);
                 contClientes.innerHTML = createTable(
                     ['ID', 'Nombre', 'Teléfono', 'Ciudad'],

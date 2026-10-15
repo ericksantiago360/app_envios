@@ -105,3 +105,17 @@ class EnvioResponse(EnvioBase):
 
     class Config:
         from_attributes = True
+
+
+class EnvioTrackingPublico(BaseModel):
+    """Datos mínimos expuestos en el rastreo público (sin autenticación)"""
+    numero_guia: str
+    estado: str
+    ciudad_origen: str
+    ciudad_destino: str
+    fecha_creacion: datetime
+    fecha_entrega_estimada: Optional[datetime] = None
+    fecha_entrega_real: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

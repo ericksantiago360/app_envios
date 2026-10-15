@@ -94,8 +94,10 @@ const mapaManager = {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            const repartidores = await response.json();
-            this.dibujarRepartidores(repartidores);
+            if (response.ok) {
+                const repartidores = await response.json();
+                this.dibujarRepartidores(repartidores);
+            }
         } catch (error) {
             console.error('Error cargando repartidores:', error);
         }
@@ -151,8 +153,8 @@ const mapaManager = {
             const infoWindow = new google.maps.InfoWindow({
                 content: `
                     <div style="padding: 10px;">
-                        <h4>${rep.nombre} ${rep.apellido}</h4>
-                        <p><strong>Vehículo:</strong> ${rep.vehiculo || 'N/A'}</p>
+                        <h4>${escapeHtml(rep.nombre)} ${escapeHtml(rep.apellido)}</h4>
+                        <p><strong>Vehículo:</strong> ${escapeHtml(rep.vehiculo || 'N/A')}</p>
                         <p><strong>Estado:</strong> ${rep.disponible ? '✅ Disponible' : '⛔ No Disponible'}</p>
                         <p><small>Última actualización: ${this.formatearFecha(rep.ultima_actualizacion_gps)}</small></p>
                     </div>
@@ -194,9 +196,9 @@ const mapaManager = {
                 const infoOrigen = new google.maps.InfoWindow({
                     content: `
                         <div style="padding: 10px;">
-                            <h4>Origen: ${envio.numero_guia}</h4>
-                            <p>${envio.direccion_origen}</p>
-                            <p>${envio.ciudad_origen}</p>
+                            <h4>Origen: ${escapeHtml(envio.numero_guia)}</h4>
+                            <p>${escapeHtml(envio.direccion_origen)}</p>
+                            <p>${escapeHtml(envio.ciudad_origen)}</p>
                             <p><strong>Estado:</strong> ${this.getEstadoText(envio.estado)}</p>
                         </div>
                     `
@@ -234,9 +236,9 @@ const mapaManager = {
                 const infoDestino = new google.maps.InfoWindow({
                     content: `
                         <div style="padding: 10px;">
-                            <h4>Destino: ${envio.numero_guia}</h4>
-                            <p>${envio.direccion_destino}</p>
-                            <p>${envio.ciudad_destino}</p>
+                            <h4>Destino: ${escapeHtml(envio.numero_guia)}</h4>
+                            <p>${escapeHtml(envio.direccion_destino)}</p>
+                            <p>${escapeHtml(envio.ciudad_destino)}</p>
                             <p><strong>Estado:</strong> ${this.getEstadoText(envio.estado)}</p>
                         </div>
                     `

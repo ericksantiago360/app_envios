@@ -42,7 +42,11 @@ def create_cliente(
     current_user: User = Depends(get_current_active_user)
 ):
     """Crear nuevo cliente"""
-    new_cliente = Cliente(**cliente.dict())
+    # Solo el admin puede vincular el cliente a la cuenta de otro usuario
+    if current_user.role != "admin" and cliente.user_id not in (None, current_user.id):
+        raise HTTPException(status_code=403, detail="No puedes vincular el cliente a otro usuario")
+
+    new_cliente = Cliente(**cliente.model_dump())
     db.add(new_cliente)
     db.commit()
     db.refresh(new_cliente)
@@ -60,8 +64,12 @@ def update_cliente(
     cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    
-    update_data = cliente_update.dict(exclude_unset=True)
+
+    # Solo el admin o el propio cliente pueden editar el perfil
+    if current_user.role != "admin" and cliente.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="No tienes permisos para editar este cliente")
+
+    update_data = cliente_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(cliente, key, value)
     

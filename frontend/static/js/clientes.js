@@ -26,10 +26,10 @@ const clientesManager = {
 
         const rows = clientes.map(cliente => [
             cliente.id,
-            `${cliente.nombre} ${cliente.apellido}`,
-            cliente.telefono || '-',
-            cliente.ciudad || '-',
-            cliente.direccion || '-',
+            escapeHtml(`${cliente.nombre} ${cliente.apellido}`),
+            escapeHtml(cliente.telefono || '-'),
+            escapeHtml(cliente.ciudad || '-'),
+            escapeHtml(cliente.direccion || '-'),
             `
                 <div class="action-buttons">
                     <button class="btn-icon" onclick="clientesManager.showEditModal(${cliente.id})" title="Editar">✏️</button>
@@ -103,27 +103,27 @@ const clientesManager = {
                 <form id="editClienteForm">
                     <div class="form-group">
                         <label>Nombre</label>
-                        <input type="text" name="nombre" value="${cliente.nombre}" required>
+                        <input type="text" name="nombre" value="${escapeHtml(cliente.nombre)}" required>
                     </div>
                     <div class="form-group">
                         <label>Apellido</label>
-                        <input type="text" name="apellido" value="${cliente.apellido}" required>
+                        <input type="text" name="apellido" value="${escapeHtml(cliente.apellido)}" required>
                     </div>
                     <div class="form-group">
                         <label>Teléfono</label>
-                        <input type="tel" name="telefono" value="${cliente.telefono || ''}">
+                        <input type="tel" name="telefono" value="${escapeHtml(cliente.telefono)}">
                     </div>
                     <div class="form-group">
                         <label>Dirección</label>
-                        <input type="text" name="direccion" value="${cliente.direccion || ''}">
+                        <input type="text" name="direccion" value="${escapeHtml(cliente.direccion)}">
                     </div>
                     <div class="form-group">
                         <label>Ciudad</label>
-                        <input type="text" name="ciudad" value="${cliente.ciudad || ''}">
+                        <input type="text" name="ciudad" value="${escapeHtml(cliente.ciudad)}">
                     </div>
                     <div class="form-group">
                         <label>Código Postal</label>
-                        <input type="text" name="codigo_postal" value="${cliente.codigo_postal || ''}">
+                        <input type="text" name="codigo_postal" value="${escapeHtml(cliente.codigo_postal)}">
                     </div>
                     <button type="submit" class="btn-primary">Actualizar</button>
                 </form>

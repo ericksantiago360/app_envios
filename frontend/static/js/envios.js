@@ -45,10 +45,10 @@ const enviosManager = {
         }
 
         const rows = envios.map(envio => [
-            envio.numero_guia,
-            envio.descripcion || '-',
-            envio.ciudad_origen,
-            envio.ciudad_destino,
+            escapeHtml(envio.numero_guia),
+            escapeHtml(envio.descripcion || '-'),
+            escapeHtml(envio.ciudad_origen),
+            escapeHtml(envio.ciudad_destino),
             getEstadoBadge(envio.estado),
             formatDate(envio.fecha_creacion),
             formatCurrency(envio.costo),
@@ -71,11 +71,11 @@ const enviosManager = {
 
     showCreateModal() {
         const clientesOptions = this.clientes.map(c => 
-            `<option value="${c.id}">${c.nombre} ${c.apellido}</option>`
+            `<option value="${c.id}">${escapeHtml(c.nombre)} ${escapeHtml(c.apellido)}</option>`
         ).join('');
 
         const repartidoresOptions = this.repartidores.map(r => 
-            `<option value="${r.id}">${r.nombre} ${r.apellido}</option>`
+            `<option value="${r.id}">${escapeHtml(r.nombre)} ${escapeHtml(r.apellido)}</option>`
         ).join('');
 
         const content = `
@@ -167,13 +167,13 @@ const enviosManager = {
             
             const content = `
                 <div class="details">
-                    <p><strong>Número de Guía:</strong> ${envio.numero_guia}</p>
+                    <p><strong>Número de Guía:</strong> ${escapeHtml(envio.numero_guia)}</p>
                     <p><strong>Estado:</strong> ${getEstadoBadge(envio.estado)}</p>
-                    <p><strong>Descripción:</strong> ${envio.descripcion || '-'}</p>
+                    <p><strong>Descripción:</strong> ${escapeHtml(envio.descripcion || '-')}</p>
                     <p><strong>Peso:</strong> ${envio.peso ? envio.peso + ' kg' : '-'}</p>
                     <hr>
-                    <p><strong>Origen:</strong> ${envio.direccion_origen}, ${envio.ciudad_origen}</p>
-                    <p><strong>Destino:</strong> ${envio.direccion_destino}, ${envio.ciudad_destino}</p>
+                    <p><strong>Origen:</strong> ${escapeHtml(envio.direccion_origen)}, ${escapeHtml(envio.ciudad_origen)}</p>
+                    <p><strong>Destino:</strong> ${escapeHtml(envio.direccion_destino)}, ${escapeHtml(envio.ciudad_destino)}</p>
                     <hr>
                     <p><strong>Costo:</strong> ${formatCurrency(envio.costo)}</p>
                     <p><strong>Fecha Creación:</strong> ${formatDate(envio.fecha_creacion)}</p>
@@ -205,7 +205,7 @@ const enviosManager = {
                     </div>
                     <div class="form-group">
                         <label>Notas</label>
-                        <textarea name="notas" rows="3">${envio.notas || ''}</textarea>
+                        <textarea name="notas" rows="3">${escapeHtml(envio.notas)}</textarea>
                     </div>
                     <button type="submit" class="btn-primary">Actualizar</button>
                 </form>

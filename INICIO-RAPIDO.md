@@ -2,9 +2,12 @@
 
 ## Iniciar el Sistema en 3 Pasos
 
-### 1️⃣ Levantar los contenedores
+### 1️⃣ Configurar variables de entorno y levantar los contenedores
 ```bash
 cd envios-app
+cp .env.example .env
+# Edita .env: pon una SECRET_KEY propia y cambia las contraseñas de MySQL
+python3 -c "import secrets; print(secrets.token_urlsafe(48))"
 docker-compose up -d
 ```
 

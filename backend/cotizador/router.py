@@ -11,6 +11,7 @@ Endpoints:
     GET  /api/cotizacion/tarifas  → Ver tabla de tarifas completa (público)
 """
 from fastapi import APIRouter, Depends, HTTPException, status
+from app.core.security import get_current_active_user
 from cotizador.modelos import SolicitudCotizacion
 from cotizador.calculadora import calcular_cotizacion, comparar_planes
 from cotizador.schemas import (
@@ -78,7 +79,10 @@ def cotizar(solicitud_schema: SolicitudCotizacionSchema):
     summary="Comparar cotización en los 3 planes de repartidor",
     description="Muestra cuánto ganaría el repartidor y cuánto retendría la plataforma según cada plan.",
 )
-def cotizar_comparar(solicitud_schema: SolicitudCotizacionSchema):
+def cotizar_comparar(
+    solicitud_schema: SolicitudCotizacionSchema,
+    current_user=Depends(get_current_active_user),
+):
     """
     Recibe los mismos parámetros que /api/cotizacion pero devuelve
     la cotización calculada para los 3 planes (Libre, Estándar, Pro).
@@ -92,6 +96,10 @@ def cotizar_comparar(solicitud_schema: SolicitudCotizacionSchema):
         plan_repartidor = solicitud_schema.plan_repartidor,
         espera_minutos  = solicitud_schema.espera_minutos,
         peso_kg         = solicitud_schema.peso_kg,
+        alto_cm         = solicitud_schema.alto_cm,
+        ancho_cm        = solicitud_schema.ancho_cm,
+        largo_cm        = solicitud_schema.largo_cm,
+        notas           = solicitud_schema.notas,
     )
 
     # Validar primero

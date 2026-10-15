@@ -2,21 +2,29 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import datetime
-import random
+import secrets
 import string
 from app.db.database import get_db
 from app.models.envio import Envio
 from app.models.user import User
-from app.schemas.envio import EnvioCreate, EnvioUpdate, EnvioResponse
-from app.core.security import get_current_active_user
+from app.schemas.envio import EnvioCreate, EnvioUpdate, EnvioResponse, EnvioTrackingPublico
+from app.core.security import get_current_active_user, verificar_acceso_envio
 
 router = APIRouter(prefix="/api/envios", tags=["Envíos"])
+
+# Campos que cada rol puede modificar en un envío (el admin puede modificar todos)
+CAMPOS_EDITABLES_CLIENTE = {
+    "descripcion", "peso", "alto", "ancho", "largo",
+    "direccion_destino", "ciudad_destino", "codigo_postal_destino",
+    "tipo_pago", "notas",
+}
+CAMPOS_EDITABLES_REPARTIDOR = {"estado", "fecha_recoleccion", "fecha_entrega_real", "notas"}
 
 
 def generar_numero_guia():
     """Generar número de guía único"""
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    random_chars = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
     return f"ENV-{timestamp}-{random_chars}"
 
 
@@ -65,7 +73,7 @@ def get_envios(
     return envios
 
 
-@router.get("/tracking/{numero_guia}", response_model=EnvioResponse)
+@router.get("/tracking/{numero_guia}", response_model=EnvioTrackingPublico)
 def track_envio(
     numero_guia: str,
     db: Session = Depends(get_db)
@@ -88,17 +96,7 @@ def get_envio(
     if not envio:
         raise HTTPException(status_code=404, detail="Envío no encontrado")
     
-    # Verificar permisos
-    if current_user.role == "cliente":
-        if current_user.cliente and (
-            envio.cliente_origen_id != current_user.cliente.id and 
-            envio.cliente_destino_id != current_user.cliente.id
-        ):
-            raise HTTPException(status_code=403, detail="No tienes acceso a este envío")
-    elif current_user.role == "repartidor":
-        if current_user.repartidor and envio.repartidor_id != current_user.repartidor.id:
-            raise HTTPException(status_code=403, detail="No tienes acceso a este envío")
-    
+    verificar_acceso_envio(current_user, envio)
     return envio
 
 
@@ -109,13 +107,22 @@ def create_envio(
     current_user: User = Depends(get_current_active_user)
 ):
     """Crear nuevo envío"""
+    if current_user.role == "repartidor":
+        raise HTTPException(status_code=403, detail="Los repartidores no pueden crear envíos")
+    if current_user.role == "cliente":
+        # Un cliente solo puede crear envíos que salen de su propio perfil
+        if not current_user.cliente or envio.cliente_origen_id != current_user.cliente.id:
+            raise HTTPException(status_code=403, detail="Solo puedes crear envíos desde tu propio perfil de cliente")
+        if envio.repartidor_id is not None:
+            raise HTTPException(status_code=403, detail="No puedes asignar repartidor")
+
     # Generar número de guía único
     numero_guia = generar_numero_guia()
     
     new_envio = Envio(
         numero_guia=numero_guia,
         estado="pendiente",
-        **envio.dict()
+        **envio.model_dump()
     )
     
     db.add(new_envio)
@@ -136,17 +143,23 @@ def update_envio(
     if not envio:
         raise HTTPException(status_code=404, detail="Envío no encontrado")
     
-    # Verificar permisos para actualización de estado
-    if envio_update.estado:
-        if current_user.role == "repartidor":
-            # Repartidores solo pueden actualizar sus envíos asignados
-            if current_user.repartidor and envio.repartidor_id != current_user.repartidor.id:
-                raise HTTPException(status_code=403, detail="No puedes actualizar este envío")
-        elif current_user.role == "cliente":
-            # Los clientes no pueden actualizar el estado
-            raise HTTPException(status_code=403, detail="No tienes permisos para actualizar el estado")
-    
-    update_data = envio_update.dict(exclude_unset=True)
+    verificar_acceso_envio(current_user, envio)
+
+    update_data = envio_update.model_dump(exclude_unset=True)
+
+    # Restringir qué campos puede tocar cada rol
+    permitidos = {
+        "cliente": CAMPOS_EDITABLES_CLIENTE,
+        "repartidor": CAMPOS_EDITABLES_REPARTIDOR,
+    }.get(current_user.role)
+    if permitidos is not None:
+        no_permitidos = set(update_data) - permitidos
+        if no_permitidos:
+            raise HTTPException(
+                status_code=403,
+                detail=f"No tienes permisos para modificar: {', '.join(sorted(no_permitidos))}"
+            )
+
     for key, value in update_data.items():
         setattr(envio, key, value)
     

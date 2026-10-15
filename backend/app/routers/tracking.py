@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -7,7 +7,7 @@ from app.db.database import get_db
 from app.models.repartidor import Repartidor
 from app.models.envio import Envio
 from app.models.user import User
-from app.core.security import get_current_active_user
+from app.core.security import get_current_active_user, verificar_acceso_envio
 
 router = APIRouter(prefix="/api/tracking", tags=["Tracking GPS"])
 
@@ -21,10 +21,10 @@ class RepartidorUbicacion(BaseModel):
     id: int
     nombre: str
     apellido: str
-    vehiculo: str
+    vehiculo: Optional[str] = None
     lat_actual: float
     lng_actual: float
-    ultima_actualizacion_gps: datetime
+    ultima_actualizacion_gps: Optional[datetime] = None
     disponible: bool
 
     class Config:
@@ -80,13 +80,35 @@ def obtener_repartidores_mapa(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtener ubicaciones de todos los repartidores activos"""
-    repartidores = db.query(Repartidor).filter(
+    """Obtener ubicaciones de repartidores visibles para el usuario.
+
+    - admin: todos
+    - repartidor: solo él mismo
+    - cliente: solo los repartidores asignados a sus envíos en curso
+    """
+    query = db.query(Repartidor).filter(
         Repartidor.lat_actual.isnot(None),
         Repartidor.lng_actual.isnot(None)
-    ).all()
-    
-    return repartidores
+    )
+
+    if current_user.role == "repartidor":
+        if not current_user.repartidor:
+            return []
+        query = query.filter(Repartidor.id == current_user.repartidor.id)
+    elif current_user.role == "cliente":
+        if not current_user.cliente:
+            return []
+        cliente_id = current_user.cliente.id
+        repartidores_ids = db.query(Envio.repartidor_id).filter(
+            Envio.repartidor_id.isnot(None),
+            Envio.estado.in_(["pendiente", "en_transito"]),
+            (Envio.cliente_origen_id == cliente_id) | (Envio.cliente_destino_id == cliente_id)
+        )
+        query = query.filter(Repartidor.id.in_(repartidores_ids))
+    elif current_user.role != "admin":
+        return []
+
+    return query.all()
 
 
 @router.get("/envios", response_model=List[EnvioMapa])
@@ -131,17 +153,8 @@ def obtener_ruta_envio(
     if not envio:
         raise HTTPException(status_code=404, detail="Envío no encontrado")
     
-    # Verificar permisos
-    if current_user.role == "cliente":
-        if current_user.cliente and (
-            envio.cliente_origen_id != current_user.cliente.id and 
-            envio.cliente_destino_id != current_user.cliente.id
-        ):
-            raise HTTPException(status_code=403, detail="No tienes acceso a este envío")
-    elif current_user.role == "repartidor":
-        if current_user.repartidor and envio.repartidor_id != current_user.repartidor.id:
-            raise HTTPException(status_code=403, detail="No tienes acceso a este envío")
-    
+    verificar_acceso_envio(current_user, envio)
+
     ruta = {
         "envio_id": envio.id,
         "numero_guia": envio.numero_guia,

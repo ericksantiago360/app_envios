@@ -63,6 +63,24 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
     return current_user
 
 
+def verificar_acceso_envio(current_user: User, envio) -> None:
+    """Lanza 403 si el usuario no puede ver/modificar el envío.
+
+    Un cliente o repartidor sin perfil asociado no tiene acceso a ningún envío.
+    """
+    if current_user.role == "admin":
+        return
+    if current_user.role == "cliente":
+        cliente = current_user.cliente
+        if cliente and cliente.id in (envio.cliente_origen_id, envio.cliente_destino_id):
+            return
+    elif current_user.role == "repartidor":
+        repartidor = current_user.repartidor
+        if repartidor and envio.repartidor_id == repartidor.id:
+            return
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes acceso a este envío")
+
+
 def require_role(required_role: str):
     """Decorador para requerir un rol específico"""
     def role_checker(current_user: User = Depends(get_current_active_user)) -> User:

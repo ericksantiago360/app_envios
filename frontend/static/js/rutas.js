@@ -39,11 +39,11 @@ const rutasManager = {
             
             return [
                 ruta.id,
-                ruta.nombre,
-                repartidorNombre,
-                ruta.zonas || '-',
-                ruta.dias_activos || '-',
-                ruta.hora_inicio && ruta.hora_fin ? `${ruta.hora_inicio} - ${ruta.hora_fin}` : '-',
+                escapeHtml(ruta.nombre),
+                escapeHtml(repartidorNombre),
+                escapeHtml(ruta.zonas || '-'),
+                escapeHtml(ruta.dias_activos || '-'),
+                ruta.hora_inicio && ruta.hora_fin ? escapeHtml(`${ruta.hora_inicio} - ${ruta.hora_fin}`) : '-',
                 ruta.activa ? 
                     '<span class="badge badge-success">Activa</span>' : 
                     '<span class="badge badge-danger">Inactiva</span>',
@@ -67,7 +67,7 @@ const rutasManager = {
 
     showCreateModal() {
         const repartidoresOptions = this.repartidores.map(r => 
-            `<option value="${r.id}">${r.nombre} ${r.apellido}</option>`
+            `<option value="${r.id}">${escapeHtml(r.nombre)} ${escapeHtml(r.apellido)}</option>`
         ).join('');
 
         const content = `
@@ -138,7 +138,7 @@ const rutasManager = {
             const ruta = await api.rutas.getById(id);
             const repartidoresOptions = this.repartidores.map(r => 
                 `<option value="${r.id}" ${r.id === ruta.repartidor_id ? 'selected' : ''}>
-                    ${r.nombre} ${r.apellido}
+                    ${escapeHtml(r.nombre)} ${escapeHtml(r.apellido)}
                 </option>`
             ).join('');
 
@@ -146,27 +146,27 @@ const rutasManager = {
                 <form id="editRutaForm">
                     <div class="form-group">
                         <label>Nombre de la Ruta</label>
-                        <input type="text" name="nombre" value="${ruta.nombre}" required>
+                        <input type="text" name="nombre" value="${escapeHtml(ruta.nombre)}" required>
                     </div>
                     <div class="form-group">
                         <label>Descripción</label>
-                        <textarea name="descripcion" rows="2">${ruta.descripcion || ''}</textarea>
+                        <textarea name="descripcion" rows="2">${escapeHtml(ruta.descripcion)}</textarea>
                     </div>
                     <div class="form-group">
                         <label>Zonas (separadas por coma)</label>
-                        <input type="text" name="zonas" value="${ruta.zonas || ''}">
+                        <input type="text" name="zonas" value="${escapeHtml(ruta.zonas)}">
                     </div>
                     <div class="form-group">
                         <label>Hora Inicio</label>
-                        <input type="time" name="hora_inicio" value="${ruta.hora_inicio || ''}">
+                        <input type="time" name="hora_inicio" value="${escapeHtml(ruta.hora_inicio)}">
                     </div>
                     <div class="form-group">
                         <label>Hora Fin</label>
-                        <input type="time" name="hora_fin" value="${ruta.hora_fin || ''}">
+                        <input type="time" name="hora_fin" value="${escapeHtml(ruta.hora_fin)}">
                     </div>
                     <div class="form-group">
                         <label>Días Activos (separados por coma)</label>
-                        <input type="text" name="dias_activos" value="${ruta.dias_activos || ''}">
+                        <input type="text" name="dias_activos" value="${escapeHtml(ruta.dias_activos)}">
                     </div>
                     <div class="form-group">
                         <label>

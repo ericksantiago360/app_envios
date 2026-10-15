@@ -1,13 +1,16 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import List
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "mysql+pymysql://envios_user:envios_pass@db:3306/envios_db"
-    SECRET_KEY: str = "tu-super-secret-key-cambiar-en-produccion"
+    # Obligatorios: deben venir del entorno o de .env (ver .env.example)
+    DATABASE_URL: str
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+    # Orígenes permitidos para CORS, separados por coma en el .env
+    CORS_ORIGINS: List[str] = ["http://localhost"]
+
     class Config:
         env_file = ".env"
 

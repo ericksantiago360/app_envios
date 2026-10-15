@@ -54,7 +54,7 @@ def create_ruta(
     if current_user.role not in ["admin"]:
         raise HTTPException(status_code=403, detail="Solo administradores pueden crear rutas")
     
-    new_ruta = Ruta(**ruta.dict())
+    new_ruta = Ruta(**ruta.model_dump())
     db.add(new_ruta)
     db.commit()
     db.refresh(new_ruta)
@@ -76,7 +76,7 @@ def update_ruta(
     if not ruta:
         raise HTTPException(status_code=404, detail="Ruta no encontrada")
     
-    update_data = ruta_update.dict(exclude_unset=True)
+    update_data = ruta_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(ruta, key, value)
     

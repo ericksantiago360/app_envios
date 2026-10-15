@@ -133,7 +133,10 @@ const cotizadorManager = {
         try {
             const response = await fetch('/api/cotizacion/comparar', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + store.get('token')
+                },
                 body: JSON.stringify(data)
             });
             const result = await response.json();

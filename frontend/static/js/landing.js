@@ -60,6 +60,17 @@ function initTracking() {
     });
 }
 
+// Escapar texto antes de insertarlo con innerHTML (previene XSS)
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function mostrarResultadoTracking(envio) {
     const resultBox = document.getElementById('trackingResult');
 
@@ -78,19 +89,19 @@ function mostrarResultadoTracking(envio) {
     resultBox.innerHTML = `
         <div class="tracking-result-row">
             <span>Número de guía</span>
-            <strong>${envio.numero_guia}</strong>
+            <strong>${escapeHtml(envio.numero_guia)}</strong>
         </div>
         <div class="tracking-result-row">
             <span>Estado</span>
-            <strong>${estadoLabels[envio.estado] || envio.estado}</strong>
+            <strong>${estadoLabels[envio.estado] || escapeHtml(envio.estado)}</strong>
         </div>
         <div class="tracking-result-row">
             <span>Origen</span>
-            <strong>${envio.ciudad_origen}</strong>
+            <strong>${escapeHtml(envio.ciudad_origen)}</strong>
         </div>
         <div class="tracking-result-row">
             <span>Destino</span>
-            <strong>${envio.ciudad_destino}</strong>
+            <strong>${escapeHtml(envio.ciudad_destino)}</strong>
         </div>
         <div class="tracking-result-row">
             <span>Fecha de creación</span>

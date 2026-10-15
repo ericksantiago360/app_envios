@@ -26,10 +26,10 @@ const repartidoresManager = {
 
         const rows = repartidores.map(repartidor => [
             repartidor.id,
-            `${repartidor.nombre} ${repartidor.apellido}`,
-            repartidor.telefono || '-',
-            repartidor.vehiculo || '-',
-            repartidor.placa_vehiculo || '-',
+            escapeHtml(`${repartidor.nombre} ${repartidor.apellido}`),
+            escapeHtml(repartidor.telefono || '-'),
+            escapeHtml(repartidor.vehiculo || '-'),
+            escapeHtml(repartidor.placa_vehiculo || '-'),
             repartidor.disponible ? 
                 '<span class="badge badge-success">Disponible</span>' : 
                 '<span class="badge badge-danger">No Disponible</span>',
@@ -118,15 +118,15 @@ const repartidoresManager = {
                 <form id="editRepartidorForm">
                     <div class="form-group">
                         <label>Nombre</label>
-                        <input type="text" name="nombre" value="${repartidor.nombre}" required>
+                        <input type="text" name="nombre" value="${escapeHtml(repartidor.nombre)}" required>
                     </div>
                     <div class="form-group">
                         <label>Apellido</label>
-                        <input type="text" name="apellido" value="${repartidor.apellido}" required>
+                        <input type="text" name="apellido" value="${escapeHtml(repartidor.apellido)}" required>
                     </div>
                     <div class="form-group">
                         <label>Teléfono</label>
-                        <input type="tel" name="telefono" value="${repartidor.telefono || ''}">
+                        <input type="tel" name="telefono" value="${escapeHtml(repartidor.telefono)}">
                     </div>
                     <div class="form-group">
                         <label>Tipo de Vehículo</label>
@@ -140,7 +140,7 @@ const repartidoresManager = {
                     </div>
                     <div class="form-group">
                         <label>Placa del Vehículo</label>
-                        <input type="text" name="placa_vehiculo" value="${repartidor.placa_vehiculo || ''}">
+                        <input type="text" name="placa_vehiculo" value="${escapeHtml(repartidor.placa_vehiculo)}">
                     </div>
                     <button type="submit" class="btn-primary">Actualizar</button>
                 </form>

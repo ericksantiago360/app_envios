@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 from app.db.database import engine, Base
 from app.routers import auth, clientes, repartidores, envios, rutas, tracking
 import sys, os
@@ -20,8 +21,8 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, especificar dominios permitidos
-    allow_credentials=True,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=False,  # La auth va en el header Authorization, no en cookies
     allow_methods=["*"],
     allow_headers=["*"],
 )
