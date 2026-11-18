@@ -191,6 +191,19 @@ const enviosManager = {
         try {
             const envio = await api.envios.getById(id);
             const currentUser = auth.getCurrentUser();
+            const esAdmin = currentUser.role === 'admin';
+
+            // Solo el admin puede asignar repartidor (el backend lo valida también)
+            const repartidorField = esAdmin ? `
+                    <div class="form-group">
+                        <label>Repartidor</label>
+                        <select name="repartidor_id">
+                            <option value="">Sin asignar</option>
+                            ${this.repartidores.map(r =>
+                                `<option value="${r.id}" ${envio.repartidor_id === r.id ? 'selected' : ''}>${escapeHtml(r.nombre)} ${escapeHtml(r.apellido)}</option>`
+                            ).join('')}
+                        </select>
+                    </div>` : '';
 
             const content = `
                 <form id="editEnvioForm">
@@ -203,6 +216,7 @@ const enviosManager = {
                             <option value="cancelado" ${envio.estado === 'cancelado' ? 'selected' : ''}>Cancelado</option>
                         </select>
                     </div>
+                    ${repartidorField}
                     <div class="form-group">
                         <label>Notas</label>
                         <textarea name="notas" rows="3">${escapeHtml(envio.notas)}</textarea>
@@ -217,6 +231,9 @@ const enviosManager = {
                 e.preventDefault();
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
+                if ('repartidor_id' in data) {
+                    data.repartidor_id = data.repartidor_id ? parseInt(data.repartidor_id) : null;
+                }
 
                 try {
                     await api.envios.update(id, data);
