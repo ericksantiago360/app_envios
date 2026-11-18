@@ -44,7 +44,7 @@ Esto creará usuarios de prueba:
 - **Repartidor**: usuario `carlos_rep` / password `rep123`
 - **Cliente**: usuario `juan_cliente` / password `cliente123`
 
-## 📊 URLs Importan
+## 📊 URLs Importantes
 
 - **Aplicación**: http://localhost
 - **API Docs**: http://localhost/docs
